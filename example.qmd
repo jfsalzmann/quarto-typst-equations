@@ -1,0 +1,25 @@
+---
+title: "typst-equations example"
+format:
+  html: default
+  typst: default
+filters:
+  - typst-equations
+---
+
+Formulas below are written once, in native Typst math syntax — no LaTeX
+anywhere. On Typst/PDF output they render natively (no compile step
+needed, it's already valid Typst). On HTML output each formula is
+compiled to a small SVG via `quarto typst compile` and cached.
+
+Inline math: $mu$ and $sigma^2$, so $X tilde.op cal(N)(mu, sigma^2)$
+describes a Normal random variable, right in the middle of a sentence.
+
+A superscripted distribution label (note the `upright()` wrapper — plain
+`f^"Bin"(...)` without it would space out as separate italic letters):
+
+$$ f^upright("Bin")(k; n, p) = binom(n, k) p^k (1-p)^(n-k) $$
+
+An `iid` sequence:
+
+$$ K_1, dots, K_m tilde.op^upright("iid") "Bernoulli"(p) $$
