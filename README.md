@@ -26,6 +26,14 @@ to get a full Typst experience, in both HTML and Typst/PDF output.
   placeholder is shown along with a render-time warning (`quarto.log.warning`)
   suggesting to remove the filter for that format.
 
+## Related extensions:
+
+Also see the related `typst-math` and `typst-render` quarto extensions. They have
+similar capabilities (the former achieves the same as this package only for PDF output;
+the latter has a broader scope, e.g. supports figures or text, with an experimental
+HTML feature). `typst-equations` is the right choice if all you need is Typst Math
+content properly rendered to both Typst-PDF and HTML output seamlessly.
+
 ## Install
 
 ```bash
