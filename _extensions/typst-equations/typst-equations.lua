@@ -54,7 +54,8 @@ local function ensure_cache_dir()
   local stem = out:match("([^/\\]+)%.[^.]+$") or out
   abs_cache_dir = dir .. "/" .. stem .. "_files/typst-equations"
   rel_cache_dir = stem .. "_files/typst-equations"
-  os.execute('mkdir -p "' .. abs_cache_dir .. '"')
+  -- pandoc.system.make_directory instead of `os.execute('mkdir -p ...')`: the latter shells out to `mkdir -p`, a Unix-only flag Windows' cmd.exe mkdir doesn't understand.
+  pcall(pandoc.system.make_directory, abs_cache_dir, true)
   return abs_cache_dir, rel_cache_dir
 end
 
