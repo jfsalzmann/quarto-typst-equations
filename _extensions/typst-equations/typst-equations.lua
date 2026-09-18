@@ -89,25 +89,27 @@ local function compile_to_svg(content, display)
     return rel_path
   end
 
-  local tmp_out = os.tmpname()
-  local ok = pcall(function()
-    pandoc.pipe("quarto", { "typst", "compile", "-", tmp_out, "--format", "svg" }, typst_source(content, display))
+  -- Workaround for upstream pandoc tmp dir issue jgm/pandoc#10946: os.tmpname() crashes pandoc.exe on Windows, so use pandoc.system.with_temporary_directory instead.
+  local svg_content = pandoc.system.with_temporary_directory("typst-equations", function(tmpdir)
+    local tmp_out = tmpdir .. "/out.svg"
+    local ok = pcall(function()
+      pandoc.pipe("quarto", { "typst", "compile", "-", tmp_out, "--format", "svg" }, typst_source(content, display))
+    end)
+    if not ok then
+      quarto.log.warning("typst-equations.lua: failed to compile formula, showing placeholder: " .. content)
+      return nil
+    end
+    local src = io.open(tmp_out, "r")
+    if not src then
+      quarto.log.warning("typst-equations.lua: no output produced for formula, showing placeholder: " .. content)
+      return nil
+    end
+    local data = src:read("*a")
+    src:close()
+    return data
   end)
 
-  if not ok then
-    quarto.log.warning("typst-equations.lua: failed to compile formula, showing placeholder: " .. content)
-    os.remove(tmp_out)
-    return nil
-  end
-
-  local src = io.open(tmp_out, "r")
-  if not src then
-    quarto.log.warning("typst-equations.lua: no output produced for formula, showing placeholder: " .. content)
-    return nil
-  end
-  local svg_content = src:read("*a")
-  src:close()
-  os.remove(tmp_out)
+  if not svg_content then return nil end
 
   local dest = io.open(svg_path, "w")
   dest:write(svg_content)
